@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.UserFeedbackDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.UserFeedbackEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="userrecno" jdbcType="VARCHAR" property="userrecno"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="contact" jdbcType="VARCHAR" property="contact"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="opdate" jdbcType="BIGINT" property="opdate"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="mark" jdbcType="VARCHAR" property="mark"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recno, userrecno, type, contact, content, opdate, status, ip, mark
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_user_feedback
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_user_feedback
+    where recno = #{recno,jdbcType=BIGINT}
+    </delete>
+
+
+    <insert id="insert" parameterType="com.clw.phaapp.entity.UserFeedbackEntity">
+        insert into tb_user_feedback (recno, userrecno, type,
+          contact, content, opdate,
+          status, ip, mark)
+        values (#{recno,jdbcType=BIGINT}, #{userrecno,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT},
+          #{contact,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{opdate,jdbcType=BIGINT},
+          #{status,jdbcType=TINYINT}, #{ip,jdbcType=VARCHAR}, #{mark,jdbcType=VARCHAR})
+    </insert>
+
+
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.UserFeedbackEntity">
+        insert into tb_user_feedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="userrecno != null">
+                userrecno,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="contact != null">
+                contact,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="opdate != null">
+                opdate,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="mark != null">
+                mark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="userrecno != null">
+                #{userrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="contact != null">
+                #{contact,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="opdate != null">
+                #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="mark != null">
+                #{mark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.UserFeedbackEntity">
+        update tb_user_feedback
+        <set>
+            <if test="userrecno != null">
+                userrecno = #{userrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="contact != null">
+                contact = #{contact,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="opdate != null">
+                opdate = #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="ip != null">
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="mark != null">
+                mark = #{mark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.UserFeedbackEntity">
+    update tb_user_feedback
+    set userrecno = #{userrecno,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      contact = #{contact,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      opdate = #{opdate,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      ip = #{ip,jdbcType=VARCHAR},
+      mark = #{mark,jdbcType=VARCHAR}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+</mapper>

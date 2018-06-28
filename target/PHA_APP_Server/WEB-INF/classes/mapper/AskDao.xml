@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.AskDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.AskEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="userrecno" jdbcType="BIGINT" property="userrecno"/>
+        <result column="opdate" jdbcType="BIGINT" property="opdate"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="visitcount" jdbcType="INTEGER" property="visitcount"/>
+        <result column="mark" jdbcType="VARCHAR" property="mark"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      recno, title, content, userrecno, opdate, status, visitcount, mark
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_ask
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+    <!--分页查询健康问答列表，获取记录数-->
+    <select id="selectAskRecordListTotalByPage" parameterType="com.clw.phaapp.entity.AskEntity"
+            resultType="java.lang.Integer">
+        select
+          COUNT(*)
+        from tb_ask
+        <where>
+            <if test="recno != null">
+                and recno = #{recno}
+            </if>
+            <if test="userrecno != null">
+                and userrecno = #{userrecno}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!--分页查询健康问答列表-->
+    <select id="selectAskRecordListByPage" parameterType="com.clw.phaapp.entity.AskEntity"
+            resultMap="BaseResultMap">
+        <if test="whetherPaging==true">
+            <include refid="paging.head"/>
+        </if>
+        select
+        <include refid="Base_Column_List"/>
+        from tb_ask
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="recno != null">
+                and recno = #{recno}
+            </if>
+            <if test="userrecno != null">
+                and userrecno = #{userrecno}
+            </if>
+        </where>
+        order by opdate desc
+        <if test="whetherPaging==true">
+            <include refid="paging.tail"/>
+        </if>
+    </select>
+
+
+    <!--获取单条健康问答明细-->
+    <select id="selectOneAskRecord" parameterType="com.clw.phaapp.entity.AskEntity"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_ask
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="recno != null">
+                and recno = #{recno}
+            </if>
+            <if test="userrecno != null">
+                and userrecno = #{userrecno}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from tb_ask
+        where recno = #{recno,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.clw.phaapp.entity.AskEntity">
+        insert into tb_ask (recno, title, content,
+          userrecno, opdate, status,
+          visitcount, mark)
+        values (#{recno,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+          #{userrecno,jdbcType=BIGINT}, #{opdate,jdbcType=BIGINT}, #{status,jdbcType=TINYINT},
+          #{visitcount,jdbcType=INTEGER}, #{mark,jdbcType=VARCHAR})
+    </insert>
+
+
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.AskEntity">
+        insert into tb_ask
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="userrecno != null">
+                userrecno,
+            </if>
+            <if test="opdate != null">
+                opdate,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="visitcount != null">
+                visitcount,
+            </if>
+            <if test="mark != null">
+                mark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="visitcount != null">
+                #{visitcount,jdbcType=INTEGER},
+            </if>
+            <if test="mark != null">
+                #{mark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!--设置问答访问次数加1-->
+    <update id="setAskVisitCount" parameterType="com.clw.phaapp.entity.AskEntity">
+        update tb_ask
+        set visitcount = visitcount+1
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.AskEntity">
+        update tb_ask
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                userrecno = #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                opdate = #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="visitcount != null">
+                visitcount = #{visitcount,jdbcType=INTEGER},
+            </if>
+            <if test="mark != null">
+                mark = #{mark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.AskEntity">
+    update tb_ask
+    set title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      userrecno = #{userrecno,jdbcType=BIGINT},
+      opdate = #{opdate,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      visitcount = #{visitcount,jdbcType=INTEGER},
+      mark = #{mark,jdbcType=VARCHAR}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.MessageDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.MessageEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="receiver" jdbcType="BIGINT" property="receiver"/>
+        <result column="sender" jdbcType="BIGINT" property="sender"/>
+        <result column="opdate" jdbcType="BIGINT" property="opdate"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="mark" jdbcType="VARCHAR" property="mark"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recno, type, receiver, sender, opdate, content, status, mark
+    </sql>
+
+    <!--分页查询消息记录数-->
+    <select id="selectRecordsTotalByPage" parameterType="com.clw.phaapp.entity.MessageEntity"
+        resultType="java.lang.Integer">
+        select
+          count(*)
+        from tb_message
+        <where>
+            <if test="receiver!=null">
+                and tb_message.receiver = #{receiver}
+            </if>
+            <if test="sender!=null">
+                and tb_message.sender = #{sender}
+            </if>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!--分页查询消息记录-->
+    <select id="selectRecordsListByPage" parameterType="com.clw.phaapp.entity.MessageEntity"
+        resultType="com.clw.phaapp.entity.MessageEntity">
+        <if test="whetherPaging==true">
+            <include refid="paging.head"/>
+        </if>
+        select
+          recno, type, receiver, sender, opdate, content, status, mark
+        from tb_message
+        <where>
+            <if test="receiver!=null">
+                and receiver = #{receiver}
+            </if>
+            <if test="sender!=null">
+                and sender = #{sender}
+            </if>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+        </where>
+        order by opdate desc
+        <if test="whetherPaging==true">
+            <include refid="paging.tail"/>
+        </if>
+    </select>
+
+
+    <!--
+
+    select
+        tb_message.recno,tb_message.type, tb_message.receiver, tb_message.sender, tb_message.opdate,
+        tb_message.content, tb_message.status, tb_message.mark,
+        tb_user.nickname as sendernickname
+        from tb_user,tb_message
+        <where>
+            <if test="1 == 1">
+                and tb_user.recno = tb_message.sender
+            </if>
+            <if test="receiver!=null">
+                and tb_message.receiver = #{receiver}
+            </if>
+            <if test="sender!=null">
+                and tb_message.sender = #{sender}
+            </if>
+        </where>
+    -->
+
+
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_message
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_message
+    where recno = #{recno,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.clw.phaapp.entity.MessageEntity">
+    insert into tb_message (recno, type, receiver, 
+      sender, opdate, content, 
+      status, mark)
+    values (#{recno,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, #{receiver,jdbcType=BIGINT}, 
+      #{sender,jdbcType=BIGINT}, #{opdate,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{mark,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.MessageEntity">
+        insert into tb_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="receiver != null">
+                receiver,
+            </if>
+            <if test="sender != null">
+                sender,
+            </if>
+            <if test="opdate != null">
+                opdate,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="mark != null">
+                mark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="receiver != null">
+                #{receiver,jdbcType=BIGINT},
+            </if>
+            <if test="sender != null">
+                #{sender,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="mark != null">
+                #{mark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.MessageEntity">
+        update tb_message
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="receiver != null">
+                receiver = #{receiver,jdbcType=BIGINT},
+            </if>
+            <if test="sender != null">
+                sender = #{sender,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                opdate = #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="mark != null">
+                mark = #{mark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.MessageEntity">
+    update tb_message
+    set type = #{type,jdbcType=TINYINT},
+      receiver = #{receiver,jdbcType=BIGINT},
+      sender = #{sender,jdbcType=BIGINT},
+      opdate = #{opdate,jdbcType=BIGINT},
+      content = #{content,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      mark = #{mark,jdbcType=VARCHAR}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+
+    <!--根据参数修改消息状态，将消息变成已读状态-->
+    <update id="updateRecordsStatusByParam" parameterType="com.clw.phaapp.entity.MessageEntity">
+        update tb_message
+        set status = 1
+        where receiver = #{receiver}
+    </update>
+
+
+
+</mapper>

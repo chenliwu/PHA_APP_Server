@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.LikeDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.LikeEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="targetrecno" jdbcType="VARCHAR" property="targetrecno"/>
+        <result column="userrecno" jdbcType="BIGINT" property="userrecno"/>
+        <result column="opdate" jdbcType="BIGINT" property="opdate"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    recno, type, targetrecno, userrecno, opdate, status
+    </sql>
+
+
+    <select id="selectRecordByParam" parameterType="com.clw.phaapp.entity.LikeEntity"
+        resultType="com.clw.phaapp.entity.LikeEntity">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_like
+        <where>
+            <if test="targetrecno != null">
+                and targetrecno = #{targetrecno}
+            </if>
+            <if test="userrecno != null">
+                and userrecno = #{userrecno}
+            </if>
+        </where>
+    </select>
+
+    <!--获取被点赞次数-->
+    <select id="selectLikeCount" parameterType="com.clw.phaapp.entity.LikeEntity"
+            resultType="java.lang.Integer">
+        select
+          count(*)
+        from tb_like
+        <where>
+            <if test="targetrecno != null">
+                and targetrecno = #{targetrecno}
+            </if>
+            <if test="userrecno != null">
+                and userrecno = #{userrecno}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_like
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_like
+    where recno = #{recno,jdbcType=BIGINT}
+    </delete>
+
+    <!--根据参数删除记录-->
+    <delete id="deleteRecordsByParam" parameterType="com.clw.phaapp.entity.LikeEntity">
+        delete from tb_like
+        <where>
+            <if test="targetrecno != null">
+                and targetrecno = #{targetrecno}
+            </if>
+        </where>
+    </delete>
+
+
+
+    <insert id="insert" parameterType="com.clw.phaapp.entity.LikeEntity">
+    insert into tb_like (recno, type, targetrecno, 
+      userrecno, opdate, status
+      )
+    values (#{recno,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, #{targetrecno,jdbcType=VARCHAR}, 
+      #{userrecno,jdbcType=BIGINT}, #{opdate,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}
+      )
+    </insert>
+
+
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.LikeEntity">
+        insert into tb_like
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="targetrecno != null">
+                targetrecno,
+            </if>
+            <if test="userrecno != null">
+                userrecno,
+            </if>
+            <if test="opdate != null">
+                opdate,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="targetrecno != null">
+                #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.LikeEntity">
+        update tb_like
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="targetrecno != null">
+                targetrecno = #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                userrecno = #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                opdate = #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.LikeEntity">
+    update tb_like
+    set type = #{type,jdbcType=TINYINT},
+      targetrecno = #{targetrecno,jdbcType=VARCHAR},
+      userrecno = #{userrecno,jdbcType=BIGINT},
+      opdate = #{opdate,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+</mapper>

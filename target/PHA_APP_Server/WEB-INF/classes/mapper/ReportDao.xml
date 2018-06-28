@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.ReportDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.ReportEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="opdate" jdbcType="BIGINT" property="opdate"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="contenttype" jdbcType="TINYINT" property="contenttype"/>
+        <result column="targetrecno" jdbcType="VARCHAR" property="targetrecno"/>
+        <result column="userrecno" jdbcType="BIGINT" property="userrecno"/>
+        <result column="detail" jdbcType="VARCHAR" property="detail"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="result" jdbcType="TINYINT" property="result"/>
+        <result column="mark" jdbcType="VARCHAR" property="mark"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    recno, opdate, type, contenttype, targetrecno, userrecno, detail, status, result, 
+    mark
+    </sql>
+
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_report
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+
+    <!--分页查询举报记录总记录数-->
+    <select id="selectRecordsTotalByPage" parameterType="com.clw.phaapp.entity.ReportEntity"
+            resultType="com.clw.phaapp.entity.ReportEntity">
+        select
+          count(*)
+        from tb_report
+        <where>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+
+    <!--分页查询举报记录-->
+    <select id="selectRecordsByPage" parameterType="com.clw.phaapp.entity.ReportEntity"
+        resultType="com.clw.phaapp.entity.ReportEntity">
+        <if test="whetherPaging==true">
+            <include refid="paging.head"/>
+        </if>
+        select
+        <include refid="Base_Column_List"/>
+        from tb_report
+        <where>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by opdate desc
+        <if test="whetherPaging==true">
+            <include refid="paging.tail"/>
+        </if>
+    </select>
+
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from tb_report
+        where recno = #{recno,jdbcType=BIGINT}
+    </delete>
+
+
+    <insert id="insert" parameterType="com.clw.phaapp.entity.ReportEntity">
+    insert into tb_report (recno, opdate, type, 
+      contenttype, targetrecno, userrecno, 
+      detail, status, result, 
+      mark)
+    values (#{recno,jdbcType=BIGINT}, #{opdate,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, 
+      #{contenttype,jdbcType=TINYINT}, #{targetrecno,jdbcType=VARCHAR}, #{userrecno,jdbcType=BIGINT}, 
+      #{detail,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{result,jdbcType=TINYINT}, 
+      #{mark,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.ReportEntity">
+        insert into tb_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="opdate != null">
+                opdate,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="contenttype != null">
+                contenttype,
+            </if>
+            <if test="targetrecno != null">
+                targetrecno,
+            </if>
+            <if test="userrecno != null">
+                userrecno,
+            </if>
+            <if test="detail != null">
+                detail,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="result != null">
+                result,
+            </if>
+            <if test="mark != null">
+                mark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="contenttype != null">
+                #{contenttype,jdbcType=TINYINT},
+            </if>
+            <if test="targetrecno != null">
+                #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="detail != null">
+                #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="result != null">
+                #{result,jdbcType=TINYINT},
+            </if>
+            <if test="mark != null">
+                #{mark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.ReportEntity">
+        update tb_report
+        <set>
+            <if test="opdate != null">
+                opdate = #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="contenttype != null">
+                contenttype = #{contenttype,jdbcType=TINYINT},
+            </if>
+            <if test="targetrecno != null">
+                targetrecno = #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                userrecno = #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="detail != null">
+                detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="result != null">
+                result = #{result,jdbcType=TINYINT},
+            </if>
+            <if test="mark != null">
+                mark = #{mark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.ReportEntity">
+    update tb_report
+    set opdate = #{opdate,jdbcType=BIGINT},
+      type = #{type,jdbcType=TINYINT},
+      contenttype = #{contenttype,jdbcType=TINYINT},
+      targetrecno = #{targetrecno,jdbcType=VARCHAR},
+      userrecno = #{userrecno,jdbcType=BIGINT},
+      detail = #{detail,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      result = #{result,jdbcType=TINYINT},
+      mark = #{mark,jdbcType=VARCHAR}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+</mapper>

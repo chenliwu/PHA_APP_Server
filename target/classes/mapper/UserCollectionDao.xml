@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.UserCollectionDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.UserCollectionEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="targetrecno" jdbcType="VARCHAR" property="targetrecno"/>
+        <result column="userrecno" jdbcType="BIGINT" property="userrecno"/>
+        <result column="opdate" jdbcType="BIGINT" property="opdate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recno, type, targetrecno, userrecno, opdate
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_user_collection
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+
+    <!--分页查询收藏记录数-->
+    <select id="selectRecordsTotalByPage" parameterType="com.clw.phaapp.entity.UserCollectionEntity"
+            resultType="java.lang.Integer">
+        select
+            count(*)
+        from tb_user_collection
+        <where>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="userrecno != null">
+                and userrecno = #{userrecno}
+            </if>
+            <if test="targetrecno != null">
+                and targetrecno = #{targetrecno}
+            </if>
+        </where>
+
+    </select>
+
+
+    <!--分页查询收藏记录-->
+    <select id="selectRecordsByPage" parameterType="com.clw.phaapp.entity.UserCollectionEntity"
+            resultType="com.clw.phaapp.entity.UserCollectionEntity">
+        <if test="whetherPaging==true">
+            <include refid="paging.head"/>
+        </if>
+        select
+            <include refid="Base_Column_List"/>
+        from tb_user_collection
+        <where>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="userrecno != null">
+                and userrecno = #{userrecno}
+            </if>
+            <if test="targetrecno != null">
+                and targetrecno = #{targetrecno}
+            </if>
+        </where>
+        order by opdate desc
+        <if test="whetherPaging==true">
+            <include refid="paging.tail"/>
+        </if>
+    </select>
+
+
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_user_collection
+    where recno = #{recno,jdbcType=BIGINT}
+    </delete>
+
+
+
+    <insert id="insert" parameterType="com.clw.phaapp.entity.UserCollectionEntity">
+    insert into tb_user_collection (recno, type, targetrecno, 
+      userrecno, opdate)
+    values (#{recno,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, #{targetrecno,jdbcType=VARCHAR}, 
+      #{userrecno,jdbcType=BIGINT}, #{opdate,jdbcType=BIGINT})
+    </insert>
+
+
+
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.UserCollectionEntity">
+        insert into tb_user_collection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="targetrecno != null">
+                targetrecno,
+            </if>
+            <if test="userrecno != null">
+                userrecno,
+            </if>
+            <if test="opdate != null">
+                opdate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="targetrecno != null">
+                #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                #{opdate,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.UserCollectionEntity">
+        update tb_user_collection
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="targetrecno != null">
+                targetrecno = #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                userrecno = #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                opdate = #{opdate,jdbcType=BIGINT},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.UserCollectionEntity">
+    update tb_user_collection
+    set type = #{type,jdbcType=TINYINT},
+      targetrecno = #{targetrecno,jdbcType=VARCHAR},
+      userrecno = #{userrecno,jdbcType=BIGINT},
+      opdate = #{opdate,jdbcType=BIGINT}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+</mapper>

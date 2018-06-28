@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.UserDao">
+	<resultMap id="BaseResultMap" type="com.clw.phaapp.entity.UserEntity">
+		<id column="recno" jdbcType="BIGINT" property="recno"/>
+		<result column="usercode" jdbcType="VARCHAR" property="usercode"/>
+		<result column="pwd" jdbcType="VARCHAR" property="pwd"/>
+		<result column="name" jdbcType="VARCHAR" property="name"/>
+		<result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+		<result column="sex" jdbcType="CHAR" property="sex"/>
+		<result column="birthday" jdbcType="INTEGER" property="birthday"/>
+		<result column="tel" jdbcType="VARCHAR" property="tel"/>
+		<result column="wechat" jdbcType="VARCHAR" property="wechat"/>
+		<result column="qq" jdbcType="VARCHAR" property="qq"/>
+		<result column="headerurl" jdbcType="VARCHAR" property="headerurl"/>
+		<result column="score" jdbcType="INTEGER" property="score"/>
+		<result column="status" jdbcType="TINYINT" property="status"/>
+		<result column="regdate" jdbcType="INTEGER" property="regdate"/>
+		<result column="security" jdbcType="VARCHAR" property="security"/>
+		<result column="answer" jdbcType="VARCHAR" property="answer"/>
+		<result column="mark" jdbcType="VARCHAR" property="mark"/>
+	</resultMap>
+	<sql id="Base_Column_List">
+		recno, usercode, pwd, name, nickname, sex, birthday, tel, wechat, qq, headerurl,
+		score, status, regdate, security, answer, mark
+  	</sql>
+
+	<sql id="commonWhere">
+		<where>
+			<if test="recno != null">
+				and recno = #{recno,jdbcType=BIGINT}
+			</if>
+			<if test="usercode != null">
+				and usercode = #{usercode,jdbcType=VARCHAR}
+			</if>
+			<if test="pwd != null">
+				and pwd = #{pwd,jdbcType=VARCHAR}
+			</if>
+			<if test="name != null">
+				and name = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="nickname != null">
+				and nickname = #{nickname,jdbcType=VARCHAR}
+			</if>
+			<if test="sex != null">
+				and sex = #{sex,jdbcType=CHAR}
+			</if>
+			<if test="tel != null">
+				and tel = #{tel,jdbcType=VARCHAR}
+			</if>
+			<if test="wechat != null">
+				and wechat = #{wechat,jdbcType=VARCHAR}
+			</if>
+			<if test="qq != null">
+				and qq = #{qq,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectOneByParam" parameterType="com.clw.phaapp.entity.UserEntity"
+			resultType="com.clw.phaapp.entity.UserEntity">
+		select
+		<include refid="Base_Column_List"/>
+		from tb_user
+		<include refid="commonWhere"/>
+	</select>
+
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from tb_user
+		where recno = #{recno,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from tb_user
+		where recno = #{recno,jdbcType=BIGINT}
+  	</delete>
+
+
+	<insert id="insert" parameterType="com.clw.phaapp.entity.UserEntity">
+		insert into tb_user (recno, usercode, pwd,
+		  name, nickname, sex, birthday,
+		  tel, wechat, qq, headerurl,
+		  score, status, regdate,
+		  security, answer, mark
+		  )
+		values (#{recno,jdbcType=BIGINT}, #{usercode,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR},
+		  #{name,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{birthday,jdbcType=INTEGER},
+		  #{tel,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, #{headerurl,jdbcType=VARCHAR},
+		  #{score,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{regdate,jdbcType=INTEGER},
+		  #{security,jdbcType=VARCHAR}, #{answer,jdbcType=VARCHAR}, #{mark,jdbcType=VARCHAR}
+		  )
+  	</insert>
+
+
+	<insert id="insertSelective" parameterType="com.clw.phaapp.entity.UserEntity">
+		insert into tb_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="recno != null">
+				recno,
+			</if>
+			<if test="usercode != null">
+				usercode,
+			</if>
+			<if test="pwd != null">
+				pwd,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="nickname != null">
+				nickname,
+			</if>
+			<if test="sex != null">
+				sex,
+			</if>
+			<if test="birthday != null">
+				birthday,
+			</if>
+			<if test="tel != null">
+				tel,
+			</if>
+			<if test="wechat != null">
+				wechat,
+			</if>
+			<if test="qq != null">
+				qq,
+			</if>
+			<if test="headerurl != null">
+				headerurl,
+			</if>
+			<if test="score != null">
+				score,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="regdate != null">
+				regdate,
+			</if>
+			<if test="security != null">
+				security,
+			</if>
+			<if test="answer != null">
+				answer,
+			</if>
+			<if test="mark != null">
+				mark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="recno != null">
+				#{recno,jdbcType=BIGINT},
+			</if>
+			<if test="usercode != null">
+				#{usercode,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				#{pwd,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="nickname != null">
+				#{nickname,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=CHAR},
+			</if>
+			<if test="birthday != null">
+				#{birthday,jdbcType=INTEGER},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="wechat != null">
+				#{wechat,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				#{qq,jdbcType=VARCHAR},
+			</if>
+			<if test="headerurl != null">
+				#{headerurl,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				#{score,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=TINYINT},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=INTEGER},
+			</if>
+			<if test="security != null">
+				#{security,jdbcType=VARCHAR},
+			</if>
+			<if test="answer != null">
+				#{answer,jdbcType=VARCHAR},
+			</if>
+			<if test="mark != null">
+				#{mark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.UserEntity">
+		update tb_user
+		<set>
+			<if test="usercode != null">
+				usercode = #{usercode,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				pwd = #{pwd,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="nickname != null">
+				nickname = #{nickname,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=CHAR},
+			</if>
+			<if test="birthday != null">
+				birthday = #{birthday,jdbcType=INTEGER},
+			</if>
+			<if test="tel != null">
+				tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="wechat != null">
+				wechat = #{wechat,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				qq = #{qq,jdbcType=VARCHAR},
+			</if>
+			<if test="headerurl != null">
+				headerurl = #{headerurl,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				score = #{score,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=TINYINT},
+			</if>
+			<if test="regdate != null">
+				regdate = #{regdate,jdbcType=INTEGER},
+			</if>
+			<if test="security != null">
+				security = #{security,jdbcType=VARCHAR},
+			</if>
+			<if test="answer != null">
+				answer = #{answer,jdbcType=VARCHAR},
+			</if>
+			<if test="mark != null">
+				mark = #{mark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where recno = #{recno,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.UserEntity">
+		update tb_user
+		set usercode = #{usercode,jdbcType=VARCHAR},
+		  pwd = #{pwd,jdbcType=VARCHAR},
+		  name = #{name,jdbcType=VARCHAR},
+		  nickname = #{nickname,jdbcType=VARCHAR},
+		  sex = #{sex,jdbcType=CHAR},
+		  birthday = #{birthday,jdbcType=DATE},
+		  tel = #{tel,jdbcType=VARCHAR},
+		  wechat = #{wechat,jdbcType=VARCHAR},
+		  qq = #{qq,jdbcType=VARCHAR},
+		  headerurl = #{headerurl,jdbcType=VARCHAR},
+		  score = #{score,jdbcType=INTEGER},
+		  status = #{status,jdbcType=TINYINT},
+		  regdate = #{regdate,jdbcType=DATE},
+		  security = #{security,jdbcType=VARCHAR},
+		  answer = #{answer,jdbcType=VARCHAR},
+		  mark = #{mark,jdbcType=VARCHAR}
+    	where recno = #{recno,jdbcType=BIGINT}
+  	</update>
+
+	<!--找回密码-->
+	<update id="updatePwd" parameterType="com.clw.phaapp.entity.UserEntity">
+		update tb_user
+		set pwd = #{pwd,jdbcType=VARCHAR}
+		where recno = #{recno,jdbcType=BIGINT}
+	</update>
+	
+
+</mapper>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.AskCommentDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.AskCommentEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="userrecno" jdbcType="BIGINT" property="userrecno"/>
+        <result column="targetrecno" jdbcType="VARCHAR" property="targetrecno"/>
+        <result column="primaryrecno" jdbcType="BIGINT" property="primaryrecno"/>
+        <result column="opdate" jdbcType="BIGINT" property="opdate"/>
+        <result column="reprecno" jdbcType="BIGINT" property="reprecno"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recno, type, content, userrecno, targetrecno, primaryrecno, opdate, reprecno, status
+    </sql>
+
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_ask_comment
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_ask_comment
+    where recno = #{recno,jdbcType=BIGINT}
+    </delete>
+
+
+    <!--根据参数删除记录-->
+    <delete id="deleteRecordsByParam" parameterType="com.clw.phaapp.entity.AskCommentEntity">
+        delete from tb_ask_comment
+        <where>
+            <if test="targetrecno != null">
+                and targetrecno = #{targetrecno}
+            </if>
+        </where>
+    </delete>
+
+
+
+
+    <insert id="insert" parameterType="com.clw.phaapp.entity.AskCommentEntity">
+    insert into tb_ask_comment (recno, type, content, 
+      userrecno, targetrecno, primaryrecno, 
+      opdate, reprecno, status
+      )
+    values (#{recno,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, #{content,jdbcType=VARCHAR}, 
+      #{userrecno,jdbcType=BIGINT}, #{targetrecno,jdbcType=VARCHAR}, #{primaryrecno,jdbcType=BIGINT}, 
+      #{opdate,jdbcType=BIGINT}, #{reprecno,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.AskCommentEntity">
+        insert into tb_ask_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="userrecno != null">
+                userrecno,
+            </if>
+            <if test="targetrecno != null">
+                targetrecno,
+            </if>
+            <if test="primaryrecno != null">
+                primaryrecno,
+            </if>
+            <if test="opdate != null">
+                opdate,
+            </if>
+            <if test="reprecno != null">
+                reprecno,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="targetrecno != null">
+                #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="primaryrecno != null">
+                #{primaryrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="reprecno != null">
+                #{reprecno,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.AskCommentEntity">
+        update tb_ask_comment
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                userrecno = #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="targetrecno != null">
+                targetrecno = #{targetrecno,jdbcType=VARCHAR},
+            </if>
+            <if test="primaryrecno != null">
+                primaryrecno = #{primaryrecno,jdbcType=BIGINT},
+            </if>
+            <if test="opdate != null">
+                opdate = #{opdate,jdbcType=BIGINT},
+            </if>
+            <if test="reprecno != null">
+                reprecno = #{reprecno,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.AskCommentEntity">
+    update tb_ask_comment
+    set type = #{type,jdbcType=TINYINT},
+      content = #{content,jdbcType=VARCHAR},
+      userrecno = #{userrecno,jdbcType=BIGINT},
+      targetrecno = #{targetrecno,jdbcType=VARCHAR},
+      primaryrecno = #{primaryrecno,jdbcType=BIGINT},
+      opdate = #{opdate,jdbcType=BIGINT},
+      reprecno = #{reprecno,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+</mapper>

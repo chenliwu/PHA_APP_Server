@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="paging">
+
+	<!--oracle分页语法-->
+	<!--<sql id="head">-->
+		<!--<if test="doAount==true">-->
+			<!--select COUNT(*) total from ( select row_.*, rownum rownum_ from (-->
+		<!--</if>-->
+		<!--<if test="doAount==false">-->
+			<!--SELECT *-->
+			  <!--FROM (SELECT row_.*, rownum rownum_-->
+			          <!--FROM (-->
+		<!--</if>-->
+	<!--</sql>-->
+	<!--<sql id="tail">-->
+		<!--<if test="doAount==true">-->
+			<!--) row_ )-->
+		<!--</if>-->
+		<!--<if test="doAount==false">-->
+			<!--) row_ ) where rownum_ -->
+			<!--<![CDATA[<]]> #{endIndex} and rownum_ <![CDATA[>=]]> #{beginIndex}-->
+		<!--</if>-->
+	<!--</sql>-->
+
+	<!-- MYSQL 分页语法 -->
+	<sql id="head">
+		<if test="doAount==true">
+			SELECT COUNT(*) total FROM(
+		</if>
+   	</sql>
+   	<sql id="tail">
+    	<if test="doAount==true">
+			)a
+		</if>
+
+		<if test="doAount==false">
+			limit #{beginIndex},#{pageSize}
+		</if>
+   	</sql>
+	
+</mapper>

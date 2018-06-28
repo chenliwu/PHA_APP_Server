@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clw.phaapp.dao.AskAnswerDao">
+    <resultMap id="BaseResultMap" type="com.clw.phaapp.entity.AskAnswerEntity">
+        <id column="recno" jdbcType="BIGINT" property="recno"/>
+        <result column="askrecno" jdbcType="BIGINT" property="askrecno"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="userrecno" jdbcType="BIGINT" property="userrecno"/>
+        <result column="optime" jdbcType="BIGINT" property="optime"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="visitcount" jdbcType="INTEGER" property="visitcount"/>
+        <result column="likecount" jdbcType="INTEGER" property="likecount"/>
+        <result column="mark" jdbcType="VARCHAR" property="mark"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    recno, askrecno, content, userrecno, optime, status, visitcount, likecount, mark
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_ask_answer
+        where recno = #{recno,jdbcType=BIGINT}
+    </select>
+
+
+    <!--获取回答总数-->
+    <select id="selectAllAskAnswerCount"  parameterType="java.lang.Long"
+            resultType="java.lang.Integer">
+        select
+        count(*)
+        from tb_ask_answer
+        where askrecno = #{askrecno}
+    </select>
+
+
+    <!--获取已经被采纳的回答个数-->
+    <select id="selectAcceptAskAnswerCount"  parameterType="java.lang.Long"
+            resultType="java.lang.Integer">
+      select
+        count(*)
+      from tb_ask_answer
+      where status = 1 and askrecno = #{askrecno}
+    </select>
+
+
+
+    <!--根据问题记录号查询所有回答总记录数-->
+    <select id="selectAllAskAnswerTotalByAskRecno" parameterType="com.clw.phaapp.entity.AskAnswerEntity"
+            resultType="java.lang.Integer">
+        select
+          count(*)
+        from tb_ask_answer,tb_user
+        <where>
+            <if test="1 == 1">
+                and tb_ask_answer.userrecno = tb_user.recno
+            </if>
+            <if test="askrecno != null">
+                and askrecno=#{askrecno}
+            </if>
+        </where>
+    </select>
+
+    <!--根据问题记录号查询所有回答-->
+    <select id="selectAllAskAnswerByAskRecno" parameterType="com.clw.phaapp.entity.AskAnswerEntity"
+            resultType="com.clw.phaapp.entity.AskAnswerEntity">
+        select
+          tb_ask_answer.recno, tb_ask_answer.askrecno, tb_ask_answer.content,
+          tb_ask_answer.userrecno, tb_ask_answer.optime, tb_ask_answer.status,
+          tb_ask_answer.visitcount, tb_ask_answer.likecount, tb_ask_answer.mark,
+          tb_user.nickname as showusernickname
+        from tb_ask_answer,tb_user
+        <where>
+            <if test="1 == 1">
+                and tb_ask_answer.userrecno = tb_user.recno
+            </if>
+            <if test="askrecno != null">
+                and tb_ask_answer.askrecno=#{askrecno}
+            </if>
+        </where>
+        order by optime desc
+    </select>
+
+
+    <!--查询回答记录数，分页-->
+    <select id="selectAskAnswerTotalByPage" parameterType="com.clw.phaapp.entity.AskAnswerEntity"
+            resultType="java.lang.Integer" >
+        select
+          count(*)
+        from tb_ask_answer,tb_user
+        <where>
+            <if test="1 == 1">
+                and tb_ask_answer.userrecno = tb_user.recno
+            </if>
+            <if test="askrecno != null">
+                and askrecno=#{askrecno}
+            </if>
+            <if test="status != null">
+                and tb_ask_answer.status=#{status}
+            </if>
+        </where>
+    </select>
+
+
+
+    <!--查询回答，分页-->
+    <select id="selectAskAnswerByPage" parameterType="com.clw.phaapp.entity.AskAnswerEntity"
+            resultType="com.clw.phaapp.entity.AskAnswerEntity">
+        <if test="whetherPaging==true">
+            <include refid="paging.head"/>
+        </if>
+        select
+            tb_ask_answer.recno, tb_ask_answer.askrecno, tb_ask_answer.content,
+            tb_ask_answer.userrecno, tb_ask_answer.optime, tb_ask_answer.status,
+            tb_ask_answer.visitcount, tb_ask_answer.likecount, tb_ask_answer.mark,
+            tb_user.nickname as showusernickname
+        from tb_ask_answer,tb_user
+        <where>
+            <if test="1 == 1">
+                and tb_ask_answer.userrecno = tb_user.recno
+            </if>
+            <if test="askrecno != null">
+                and tb_ask_answer.askrecno=#{askrecno}
+            </if>
+            <if test="status != null">
+                and tb_ask_answer.status=#{status}
+            </if>
+        </where>
+        order by optime desc
+        <if test="whetherPaging==true">
+            <include refid="paging.tail"/>
+        </if>
+    </select>
+
+
+    <!--删除指定记录-->
+    <delete id="deleteAnswerRecordsByParam" parameterType="com.clw.phaapp.entity.AskAnswerEntity">
+        delete from tb_ask_answer
+        <where>
+            <if test="askrecno != null">
+                askrecno = #{askrecno}
+            </if>
+            <if test="userrecno != null">
+                userrecno = #{userrecno}
+            </if>
+        </where>
+    </delete>
+
+
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from tb_ask_answer
+        where recno = #{recno,jdbcType=BIGINT}
+    </delete>
+
+
+    <insert id="insert" parameterType="com.clw.phaapp.entity.AskAnswerEntity">
+    insert into tb_ask_answer (recno, askrecno, content, 
+      userrecno, optime, status, 
+      visitcount, likecount, mark
+      )
+    values (#{recno,jdbcType=BIGINT}, #{askrecno,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
+      #{userrecno,jdbcType=BIGINT}, #{optime,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, 
+      #{visitcount,jdbcType=INTEGER}, #{likecount,jdbcType=INTEGER}, #{mark,jdbcType=VARCHAR}
+      )
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.clw.phaapp.entity.AskAnswerEntity">
+        insert into tb_ask_answer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                recno,
+            </if>
+            <if test="askrecno != null">
+                askrecno,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="userrecno != null">
+                userrecno,
+            </if>
+            <if test="optime != null">
+                optime,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="visitcount != null">
+                visitcount,
+            </if>
+            <if test="likecount != null">
+                likecount,
+            </if>
+            <if test="mark != null">
+                mark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recno != null">
+                #{recno,jdbcType=BIGINT},
+            </if>
+            <if test="askrecno != null">
+                #{askrecno,jdbcType=BIGINT},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="optime != null">
+                #{optime,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="visitcount != null">
+                #{visitcount,jdbcType=INTEGER},
+            </if>
+            <if test="likecount != null">
+                #{likecount,jdbcType=INTEGER},
+            </if>
+            <if test="mark != null">
+                #{mark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    
+    <!--设置访问次数加1-->
+    <update id="setAskAnswerVisitCount" parameterType="com.clw.phaapp.entity.AskAnswerEntity">
+         update tb_ask_answer
+         set visitcount = visitcount+1
+          where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    
+    
+    
+    <update id="updateByPrimaryKeySelective" parameterType="com.clw.phaapp.entity.AskAnswerEntity">
+        update tb_ask_answer
+        <set>
+            <if test="askrecno != null">
+                askrecno = #{askrecno,jdbcType=BIGINT},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="userrecno != null">
+                userrecno = #{userrecno,jdbcType=BIGINT},
+            </if>
+            <if test="optime != null">
+                optime = #{optime,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="visitcount != null">
+                visitcount = #{visitcount,jdbcType=INTEGER},
+            </if>
+            <if test="likecount != null">
+                likecount = #{likecount,jdbcType=INTEGER},
+            </if>
+            <if test="mark != null">
+                mark = #{mark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where recno = #{recno,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.clw.phaapp.entity.AskAnswerEntity">
+    update tb_ask_answer
+    set askrecno = #{askrecno,jdbcType=BIGINT},
+      content = #{content,jdbcType=VARCHAR},
+      userrecno = #{userrecno,jdbcType=BIGINT},
+      optime = #{optime,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      visitcount = #{visitcount,jdbcType=INTEGER},
+      likecount = #{likecount,jdbcType=INTEGER},
+      mark = #{mark,jdbcType=VARCHAR}
+    where recno = #{recno,jdbcType=BIGINT}
+  </update>
+</mapper>

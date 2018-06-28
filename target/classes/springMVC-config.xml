@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--springMVC和MyBatis配置-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.3.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <!-- 启动包spring自动扫描功能，以便注册带有@Controller、@Service、@repository、@Component等注解的类成为spring的bean -->
+    <context:component-scan base-package="com.clw.phaapp"/>
+
+    <!-- 启动注解驱动的Spring MVC功能，注册请求url和注解POJO类方法的映射 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <!--设置默认返回数据类型为text/html，编码为UTF-8-->
+                <property name="supportedMediaTypes" value="text/html;charset=UTF-8"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+
+
+    <!-- 开启切面编程功能 -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!-- 防止返回jsp页面时候被拦截 -->
+    <mvc:default-servlet-handler/>
+
+    <!-- 读取jdbc,config配置文件,读取多个配置文件需要加上ignore-unresolvable="true",如果有相同的字段，以第一个扫描到的为准-->
+    <context:property-placeholder location="classpath:jdbc.properties" ignore-unresolvable="true"/>
+    <!--<context:property-placeholder location="classpath:config.properties" ignore-unresolvable="true"/>-->
+
+    <!--初始化系统类-->
+    <bean class="com.clw.phaapp.common.init.InitSystem"/>
+    <!--异常处理类-->
+    <bean id="exceptionHandler" class="com.clw.phaapp.common.exception.GlobalExceptionHandler"/>
+
+    <!-- 配置数据源，配置C3P0 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close">
+        <property name="driverClass" value="${jdbc.driverClass}"/>
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
+        <property name="user" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!--连接池中保留的最小连接数。 -->
+        <property name="minPoolSize" value="${jdbc.minPoolSize}"/>
+        <!--连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"/>
+        <!--最大空闲时间,1800秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="${jdbc.maxIdleTime}"/>
+        <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+        <property name="acquireIncrement" value="${jdbc.acquireIncrement}"/>
+        <property name="maxStatements" value="${jdbc.maxStatements}"/>
+        <property name="initialPoolSize" value="${jdbc.initialPoolSize}"/>
+        <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+        <property name="idleConnectionTestPeriod" value="${jdbc.idleConnectionTestPeriod}"/>
+        <!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->
+        <property name="acquireRetryAttempts" value="${jdbc.acquireRetryAttempts}"/>
+        <!-- <property name="acquireRetryDelay" value="100"></property> -->
+        <property name="breakAfterAcquireFailure" value="false"/>
+        <property name="testConnectionOnCheckout" value="false"/>
+    </bean>
+
+    <!--打印SQL语句-->
+    <bean id="p6dataSource" class="com.p6spy.engine.spy.P6DataSource">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+    <!-- 使用spring的事务管理 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="p6dataSource"/>
+    </bean>
+
+    <!-- 创建sessionFactory，spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--数据库配置-->
+        <property name="dataSource" ref="p6dataSource"/>
+        <!--MyBatis配置文件-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- 自动扫描mapping.xml文件 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+    </bean>
+
+    <!-- 自动扫描dao包（Spring会自动查找其下的类） -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.clw.phaapp.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <!--配置事务service层事务不需要每层service都标注解了 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- *表示匹配任意方法名，add*：匹配add开头的方法 -->
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- Spring AOP config
+          解释一下(* com.ketu.com.clw.weblogin.com.clw.phaapp.service.impl.*.*(..))中几个通配符的含义：
+          第一个 * —— 通配 任意返回值类型
+          第二个 * —— 通配 包com.ketu.com.clw.weblogin.com.clw.phaapp.service.impl下的任意class
+          第三个 * —— 通配 包com.ketu.com.clw.weblogin.com.clw.phaapp.service.impl下的任意class的任意方法
+          第四个 .. —— 通配 方法可以有0个或多个参数
+	 -->
+    <aop:config>
+        <aop:pointcut id="interceptorPointCuts"
+                      expression="execution(* com.clw.phaapp.*.service.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="interceptorPointCuts"/>
+    </aop:config>
+
+
+    <!-- 对模型视图名称的解析，在请求时模型视图名称添加前后缀 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <!-- <property name="prefix" value="/"/> -->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 指定所上传文件的总大小,单位字节。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+        <property name="maxUploadSize" value="102400000"/>
+    </bean>
+
+</beans>
